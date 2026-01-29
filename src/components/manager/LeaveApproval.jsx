@@ -6,7 +6,7 @@ function LeaveApproval() {
   const [leaves, setLeaves] = useState([]);
   const [message, setMessage] = useState(null);
   const [loadingId, setLoadingId] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const allLeaves = async () => {
     setLoading(true);

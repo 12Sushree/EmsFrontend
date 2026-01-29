@@ -21,7 +21,7 @@ const managerSlice = createSlice({
   initialState: {
     team: [],
     teamSize: 0,
-    loading: false,
+    loading: true,
     error: null,
   },
   extraReducers: (builder) => {

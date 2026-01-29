@@ -34,7 +34,7 @@ const empSlice = createSlice({
   initialState: {
     tasks: [],
     attendance: [],
-    loading: false,
+    loading: true,
     error: null,
   },
   reducers: {

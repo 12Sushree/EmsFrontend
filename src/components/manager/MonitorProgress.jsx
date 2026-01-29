@@ -10,7 +10,6 @@ function MonitorProgress() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading(true);
         const res = await monitorProgress();
         setData(res.data.summary);
       } catch (err) {
