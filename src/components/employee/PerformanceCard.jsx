@@ -31,14 +31,6 @@ function PerformanceCard() {
     return () => clearTimeout(timer);
   }, [message]);
 
-  if (loading) {
-    return (
-      <div className="card text-center text-slate-500">
-        Loading performance...
-      </div>
-    );
-  }
-
   useEffect(() => {
     if (!loading && !data) {
       setMessage({
@@ -47,6 +39,14 @@ function PerformanceCard() {
       });
     }
   }, [data, loading]);
+
+  if (loading) {
+    return (
+      <div className="card text-center text-slate-500">
+        Loading performance...
+      </div>
+    );
+  }
 
   return (
     <div className="card">
