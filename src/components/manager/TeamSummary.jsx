@@ -49,7 +49,7 @@ function TeamSummary() {
         text: "No Member Found!",
       });
     }
-  }, [error, team]);
+  }, [error, team, loading]);
 
   if (loading) {
     return (

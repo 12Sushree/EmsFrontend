@@ -34,7 +34,7 @@ function AttendanceTable() {
         text: "No Attendance Record Found!",
       });
     }
-  }, [error, attendance]);
+  }, [error, attendance, loading]);
 
   if (loading) {
     return (

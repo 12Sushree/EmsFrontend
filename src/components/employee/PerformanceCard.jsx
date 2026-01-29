@@ -39,12 +39,14 @@ function PerformanceCard() {
     );
   }
 
-  if (!data) {
-    setMessage({
-      type: "info",
-      text: "No Deatils available!",
-    });
-  }
+  useEffect(() => {
+    if (!loading && !data) {
+      setMessage({
+        type: "info",
+        text: "No Details available!",
+      });
+    }
+  }, [data, loading]);
 
   return (
     <div className="card">

@@ -31,17 +31,19 @@ function MonitorProgress() {
     return () => clearTimeout(timer);
   }, [message]);
 
+  useEffect(() => {
+    if (!loading && !data) {
+      setMessage({
+        type: "info",
+        text: "No Progress available!",
+      });
+    }
+  }, [data, loading]);
+
   if (loading) {
     return (
       <div className="card text-center text-slate-500">Loading progress...</div>
     );
-  }
-
-  if (!data) {
-    setMessage({
-      type: "info",
-      text: "No Progress available!",
-    });
   }
 
   return (

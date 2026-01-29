@@ -38,7 +38,7 @@ function MyLeaves() {
         text: "No leave records found",
       });
     }
-  }, [leaves]);
+  }, [leaves, loading]);
 
   if (loading) {
     return (

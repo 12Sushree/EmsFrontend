@@ -49,8 +49,11 @@ function AssignTask() {
     }
   };
 
+  useEffect(() => {
+    if (error) setMessage({ type: "error", text: error });
+  }, [error]);
+
   if (loading) return <p className="text-slate-500 text-sm">Loading team...</p>;
-  if (error) setMessage({ type: "error", text: error });
 
   return (
     <div className="card mb-6 max-w-lg">

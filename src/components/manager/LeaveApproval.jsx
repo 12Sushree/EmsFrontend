@@ -56,7 +56,7 @@ function LeaveApproval() {
         text: "No Leave Record Found!",
       });
     }
-  }, [leaves]);
+  }, [leaves, loading]);
 
   return (
     <div className="bg-white p-5 shadow rounded-xl">

@@ -49,7 +49,7 @@ export default function TaskList() {
         text: "No tasks assigned",
       });
     }
-  }, [error, tasks]);
+  }, [error, tasks, loading]);
 
   if (loading) {
     return (
