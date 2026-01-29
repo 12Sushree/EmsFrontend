@@ -1,0 +1,89 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    @apply bg-slate-100 text-slate-800 antialiased;
+  }
+
+  h1 {
+    @apply text-2xl font-bold text-slate-900;
+  }
+
+  h2 {
+    @apply text-xl font-semibold text-slate-900;
+  }
+
+  h3 {
+    @apply text-lg font-semibold;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-white rounded-xl shadow-sm border border-slate-200 p-5;
+  }
+
+  .card-hover {
+    @apply transition hover:shadow-md hover:-translate-y-0.5;
+  }
+
+  .btn {
+    @apply px-4 py-2 rounded-lg font-medium transition hover:cursor-pointer;
+  }
+
+  .btn-success {
+    @apply bg-green-600 text-white hover:bg-green-700;
+  }
+
+  .btn-success-glow {
+    @apply shadow-md shadow-green-200;
+  }
+
+  .btn-primary {
+    @apply bg-blue-600 text-white hover:bg-blue-700;
+  }
+
+  .btn-primary-glow {
+    @apply shadow-md shadow-blue-200;
+  }
+
+  .btn-danger {
+    @apply bg-red-600 text-white hover:bg-red-700;
+  }
+
+  .btn-danger-glow {
+    @apply shadow-md shadow-red-200;
+  }
+
+  .input {
+    @apply w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500;
+  }
+
+  .table-th {
+    @apply px-4 py-2 text-left text-sm font-semibold text-slate-600;
+  }
+
+  .table-td {
+    @apply px-4 py-2 text-sm text-slate-700;
+  }
+
+  .alert {
+    @apply flex items-start gap-3 p-4 rounded-lg border text-sm transition-opacity duration-300;
+  }
+
+  .alert-success {
+    @apply bg-green-50 text-green-700 border-green-200;
+  }
+
+  .alert-error {
+    @apply bg-red-50 text-red-700 border-red-200;
+  }
+
+  .alert-info {
+    @apply bg-blue-50 text-blue-700 border-blue-200;
+  }
+
+  .alert-warning {
+    @apply bg-yellow-50 text-yellow-700 border-yellow-200;
+  }
+}
