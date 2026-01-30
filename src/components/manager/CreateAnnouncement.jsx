@@ -5,7 +5,7 @@ import Alert from "../common/Alert";
 export default function CreateAnnouncement() {
   const [form, setForm] = useState({ title: "", message: "" });
   const [message, setMessage] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const submit = async (e) => {
     e.preventDefault();
