@@ -1,44 +1,51 @@
-import React, { useEffect, useState } from "react";
-import { myLeaves } from "../../features/employee/employeeAPI";
+import { useEffect, useState } from "react";
+import { myLeaves } from "../../store/employee/employeeAPI";
 import Alert from "../common/Alert";
+import Button from "../common/Button";
 
 function MyLeaves() {
   const [leaves, setLeaves] = useState([]);
-  const [message, setMessage] = useState(null);
+  const [alert, setAlert] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const res = await myLeaves(page);
+      setLeaves(res.data.data || []);
+      setTotalPages(res.data.pages || 1);
+    } catch (err) {
+      setAlert({
+        type: "error",
+        message: err.response?.data?.message || "Failed to fetch leaves",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await myLeaves();
-        setLeaves(res.data.data || []);
-      } catch (err) {
-        setMessage({
-          type: "error",
-          text: err.response?.data?.message || "Failed to fetch leaves",
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchData();
-  }, []);
+  }, [page]);
 
   useEffect(() => {
-    if (!message) return;
-    const timer = setTimeout(() => setMessage(null), 5000);
-    return () => clearTimeout(timer);
-  }, [message]);
+    if (alert) return;
 
-  useEffect(() => {
     if (!loading && leaves.length === 0) {
-      setMessage({
+      setAlert({
         type: "info",
-        text: "No leave records found",
+        message: "No leave records found",
       });
     }
-  }, [leaves, loading]);
+  }, [leaves, loading, alert]);
+
+  useEffect(() => {
+    if (!alert) return;
+    const timer = setTimeout(() => setAlert(null), 5000);
+    return () => clearTimeout(timer);
+  }, [alert]);
 
   if (loading) {
     return (
@@ -48,11 +55,14 @@ function MyLeaves() {
 
   return (
     <div className="card">
-      <h2 className="font-bold text-lg mb-4">My Leave History</h2>
+      <div className="flex justify-between items-center">
+        <h2 className="font-bold text-lg mb-4">My Leave History</h2>
+        <Button onClick={fetchData}>⟳</Button>
+      </div>
 
-      {message && (
+      {alert && (
         <div className="card">
-          <Alert type={message.type} message={message.text} />
+          <Alert type={alert.type} message={alert.message} />
         </div>
       )}
 
@@ -97,6 +107,28 @@ function MyLeaves() {
           </tbody>
         </table>
       </div>
+
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center gap-4 mt-6">
+          <Button
+            disabled={page === 1}
+            onClick={() => setPage((prev) => prev - 1)}
+          >
+            ⬅ Prev
+          </Button>
+
+          <span className="text-sm font-semibold">
+            Page {page} of {totalPages}
+          </span>
+
+          <Button
+            disabled={page === totalPages}
+            onClick={() => setPage((prev) => prev + 1)}
+          >
+            Next ➡
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

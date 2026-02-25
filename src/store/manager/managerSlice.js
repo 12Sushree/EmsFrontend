@@ -3,13 +3,10 @@ import { teamDetails } from "./managerAPI";
 
 export const fetchTeam = createAsyncThunk(
   "manager/fetchTeam",
-  async (_, { rejectWithValue }) => {
+  async (page = 1, { rejectWithValue }) => {
     try {
-      const res = await teamDetails();
-      return {
-        team: res.data.team,
-        teamSize: res.data.teamSize,
-      };
+      const res = await teamDetails(page);
+      return res.data;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message);
     }
@@ -21,6 +18,8 @@ const managerSlice = createSlice({
   initialState: {
     team: [],
     teamSize: 0,
+    page: 1,
+    pages: 1,
     loading: true,
     error: null,
   },
@@ -28,11 +27,14 @@ const managerSlice = createSlice({
     builder
       .addCase(fetchTeam.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
       .addCase(fetchTeam.fulfilled, (state, action) => {
         state.loading = false;
         state.team = action.payload.team;
         state.teamSize = action.payload.teamSize;
+        state.page = action.payload.page;
+        state.pages = action.payload.totalPages;
       })
       .addCase(fetchTeam.rejected, (state, action) => {
         state.loading = false;

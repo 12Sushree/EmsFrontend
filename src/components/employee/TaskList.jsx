@@ -1,59 +1,105 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchTasks } from "../../features/employee/employeeSlice";
-import { updateTask } from "../../features/employee/employeeAPI";
+import { fetchTasks, setPage } from "../../store/employee/employeeSlice";
+import { updateTask } from "../../store/employee/employeeAPI";
 import Alert from "../common/Alert";
+import Select from "../common/Select";
+import { useForm, useFieldArray, Controller } from "react-hook-form";
+import Button from "../common/Button";
 
 export default function TaskList() {
   const dispatch = useDispatch();
-  const { tasks = [], loading, error } = useSelector((state) => state.employee);
+  const {
+    tasks,
+    taskLoading,
+    error,
+    page = 1,
+    pages = 1,
+  } = useSelector((state) => state.employee);
 
-  const [message, setMessage] = useState(null);
+  const { control } = useForm({
+    defaultValues: {
+      tasks: [],
+    },
+  });
+
+  const { fields, replace } = useFieldArray({
+    control,
+    name: "tasks",
+  });
+
+  const statusOptions = [
+    {
+      value: "Todo",
+      label: "Todo",
+    },
+    {
+      value: "In Progress",
+      label: "In Progress",
+    },
+    {
+      value: "Done",
+      label: "Completed",
+    },
+  ];
+
+  const [alert, setAlert] = useState(null);
   const [updatingId, setUpdatingId] = useState(null);
 
   useEffect(() => {
-    dispatch(fetchTasks());
-  }, [dispatch]);
+    dispatch(fetchTasks(page));
+  }, [dispatch, page]);
 
-  const updateStatus = async (id, status) => {
+  useEffect(() => {
+    if (tasks?.length) {
+      replace(tasks || []);
+    }
+  }, [tasks, replace]);
+
+  useEffect(() => {
+    if (taskLoading) return;
+
+    if (error) {
+      setAlert((prev) =>
+        prev?.message === error ? prev : { type: "error", message: error },
+      );
+      return;
+    }
+
+    if (tasks?.length === 0) {
+      setAlert((prev) =>
+        prev?.message === "No tasks found!"
+          ? prev
+          : { type: "info", message: "No tasks found!" },
+      );
+    }
+  }, [taskLoading, error, tasks]);
+
+  useEffect(() => {
+    if (!alert) return;
+    const timer = setTimeout(() => setAlert(null), 5000);
+    return () => clearTimeout(timer);
+  }, [alert]);
+
+  const handleStatusChange = async (taskId, value) => {
     try {
-      setUpdatingId(id);
-      await updateTask(id, status);
-      setMessage({ type: "success", text: "Task status updated" });
-      dispatch(fetchTasks());
+      setUpdatingId(taskId);
+      await updateTask(taskId, { status: value });
+      setAlert({ type: "success", message: "Status updated" });
+      dispatch(fetchTasks(page));
     } catch (err) {
-      setMessage({
+      setAlert({
         type: "error",
-        text: err.response?.data?.message || "Failed to update task",
+        message: err.response?.data?.message || "Update failed",
       });
     } finally {
       setUpdatingId(null);
     }
   };
 
-  useEffect(() => {
-    if (!message) return;
-    const timer = setTimeout(() => setMessage(null), 5000);
-    return () => clearTimeout(timer);
-  }, [message]);
-
-  useEffect(() => {
-    if (error) {
-      setMessage({
-        type: "error",
-        text: error,
-      });
-    } else if (!loading && tasks.length === 0) {
-      setMessage({
-        type: "info",
-        text: "No tasks assigned",
-      });
-    }
-  }, [error, tasks, loading]);
-
-  if (loading) {
+  if (taskLoading) {
     return (
-      <div className="card text-center text-slate-500">Loading tasks...</div>
+      <div className="card text-center text-slate-500">Loading tasks.....</div>
     );
   }
 
@@ -61,31 +107,60 @@ export default function TaskList() {
     <div className="card">
       <h2 className="font-bold text-lg mb-4">My Tasks</h2>
 
-      {message && (
+      {alert && (
         <div className="mb-4">
-          <Alert type={message.type} message={message.text} />
+          <Alert type={alert.type} message={alert.message} />
         </div>
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        {tasks.map((task) => (
+        {fields.map((task, index) => (
           <div key={task._id} className="p-4 bg-slate-50 rounded-xl shadow-sm">
             <h3 className="font-semibold mb-1">{task.title}</h3>
             <p className="text-sm text-slate-600 mb-3">{task.description}</p>
 
-            <select
-              value={task.status}
-              disabled={updatingId === task._id}
-              onChange={(e) => updateStatus(task._id, e.target.value)}
-              className="input text-sm bg-white"
-            >
-              <option value="Todo">Todo</option>
-              <option value="Inprogress">In Progress</option>
-              <option value="Done">Done</option>
-            </select>
+            <Controller
+              name={`tasks.${index}.status`}
+              control={control}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  options={statusOptions}
+                  disabled={taskLoading || updatingId === task._id}
+                  onChange={async (e) => {
+                    const value = e.target.value;
+                    field.onChange(value);
+                    await handleStatusChange(task._id, value);
+                  }}
+                  className="text-sm bg-white"
+                />
+              )}
+            />
           </div>
         ))}
       </div>
+
+      {pages > 1 && (
+        <div className="flex justify-center items-center gap-4 mt-6">
+          <Button
+            disabled={page === 1}
+            onClick={() => dispatch(setPage(page - 1))}
+          >
+            ⬅ Prev
+          </Button>
+
+          <span className="text-sm font-semibold">
+            Page {page} of {pages}
+          </span>
+
+          <Button
+            disabled={page === pages}
+            onClick={() => dispatch(setPage(page + 1))}
+          >
+            Next ➡
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

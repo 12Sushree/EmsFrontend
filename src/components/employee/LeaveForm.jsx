@@ -1,40 +1,48 @@
-import React, { useEffect, useState } from "react";
-import { applyLeave } from "../../features/employee/employeeAPI";
+import { useEffect, useState } from "react";
+import { applyLeave } from "../../store/employee/employeeAPI";
 import Alert from "../common/Alert";
+import { useForm } from "react-hook-form";
+import Input from "../common/Input";
+import Button from "../common/Button";
+import Textarea from "../common/Textarea";
 
 function LeaveForm() {
-  const [form, setForm] = useState({
-    from: "",
-    to: "",
-    reason: "",
-  });
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors, isValid },
+    reset,
+  } = useForm();
 
-  const [message, setMessage] = useState(null);
+  const [alert, setAlert] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const today = new Date().toISOString().split("T")[0];
+  const fromDate = watch("from");
+  const reason = watch("reason", "");
 
-    if (form.from > form.to) {
-      setMessage({
-        type: "error",
-        text: "End date cannot be before start date",
-      });
-      return;
-    }
-
+  const submit = async (data) => {
     try {
       setLoading(true);
-      await applyLeave(form);
-      setMessage({
+
+      const payload = {
+        from: data.from,
+        to: data.to,
+        reason: data.reason,
+      };
+      await applyLeave(payload);
+
+      setAlert({
         type: "success",
-        text: "Leave applied successfully",
+        message: "Leave applied successfully",
       });
-      setForm({ from: "", to: "", reason: "" });
+
+      reset();
     } catch (err) {
-      setMessage({
+      setAlert({
         type: "error",
-        text: err.response?.data?.message || "Failed to apply leave",
+        message: err.response?.data?.message || "Failed to apply leave",
       });
     } finally {
       setLoading(false);
@@ -42,54 +50,79 @@ function LeaveForm() {
   };
 
   useEffect(() => {
-    if (!message) return;
-    const timer = setTimeout(() => setMessage(null), 5000);
+    if (!alert) return;
+    const timer = setTimeout(() => setAlert(null), 5000);
     return () => clearTimeout(timer);
-  }, [message]);
+  }, [alert]);
 
   return (
     <div className="card mb-6 max-w-lg">
       <h2 className="font-bold text-lg mb-4">Apply Leave</h2>
 
-      {message && (
+      {alert && (
         <div className="mb-4">
-          <Alert type={message.type} message={message.text} />
+          <Alert type={alert.type} message={alert.message} />
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          type="date"
-          value={form.from}
-          onChange={(e) => setForm({ ...form, from: e.target.value })}
-          className="input"
-          required
-        />
+      <form onSubmit={handleSubmit(submit)} className="space-y-4">
+        <div>
+          <Input
+            type="date"
+            min={today}
+            {...register("from", {
+              required: "From date is required!",
+            })}
+          />
+          {errors.from && (
+            <span className="text-red-600">{errors.from.message}</span>
+          )}
+        </div>
 
-        <input
-          type="date"
-          value={form.to}
-          onChange={(e) => setForm({ ...form, to: e.target.value })}
-          className="input"
-          required
-        />
+        <div>
+          <Input
+            type="date"
+            min={fromDate || today}
+            {...register("to", {
+              required: "To date is required!",
+              validate: (value) =>
+                !fromDate ||
+                value >= fromDate ||
+                "End date can't be before start date!",
+            })}
+          />
+          {errors.to && (
+            <span className="text-red-600">{errors.to.message}</span>
+          )}
+        </div>
 
-        <input
-          type="text"
-          placeholder="Reason"
-          value={form.reason}
-          onChange={(e) => setForm({ ...form, reason: e.target.value })}
-          className="input"
-          required
-        />
+        <div>
+          <Textarea
+            placeholder="Reason"
+            maxLength={2000}
+            {...register("reason", {
+              required: "Reason is required!",
+              validate: (value) =>
+                value.trim() !== "" || "Reason can't be empty!",
+              maxLength: {
+                value: 2000,
+                message: "Maximum 2000 characters are allowed!",
+              },
+            })}
+          />
+          <p className="flex justify-between">
+            <span className="text-red-600">{errors.reason?.message}</span>
+            <span>{reason.length} / 2000</span>
+          </p>
+        </div>
 
-        <button
+        <Button
           type="submit"
-          disabled={loading}
-          className="btn btn-primary btn-primary-glow w-full disabled:opacity-50"
+          disabled={loading || !isValid}
+          className="btn-primary btn-primary-glow w-full"
         >
           {loading ? "Applying..." : "Apply Leave"}
-        </button>
+        </Button>
       </form>
     </div>
   );

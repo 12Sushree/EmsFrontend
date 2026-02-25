@@ -1,23 +1,30 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { loadUser } from "./features/auth/authSlice";
-import { BrowserRouter } from "react-router-dom";
-import AppRoutes from "./routes/AppRoutes";
+import { loadUser } from "./store/auth/authSlice";
+import { Outlet } from "react-router-dom";
+import { getAccessToken } from "./utils/token";
 
 function App() {
   const dispatch = useDispatch();
-  const { token } = useSelector((state) => state.auth);
+  const { user, loading } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    if (token) {
-      dispatch(loadUser());
-    }
-  }, [token, dispatch]);
+    const token = getAccessToken();
+    if (token && !user) dispatch(loadUser());
+  }, [dispatch, user]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        Loading.....
+      </div>
+    );
+  }
 
   return (
-    <BrowserRouter>
-      <AppRoutes />
-    </BrowserRouter>
+    <>
+      <Outlet />
+    </>
   );
 }
 

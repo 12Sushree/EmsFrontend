@@ -1,73 +1,107 @@
-import React, { useState, useEffect } from "react";
-import {
-  addEmployee,
-  getProfileByName,
-} from "../../features/manager/managerAPI";
+import { useState, useEffect } from "react";
+import { addEmployee, searchEmployees } from "../../store/manager/managerAPI";
 import Alert from "../common/Alert";
+import Input from "../common/Input";
+import Button from "../common/Button";
 
 function AddEmployeeForm() {
-  const [empName, setEmpName] = useState("");
-  const [message, setMessage] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState([]);
+  const [alert, setAlert] = useState(null);
+  const [searching, setSearching] = useState(false);
+  const [addingId, setAddingId] = useState(null);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const search = async () => {
     try {
-      setLoading(true);
-
-      const res = await getProfileByName(empName);
-      const empId = res.data.user._id;
-
-      await addEmployee(empId);
-      setMessage({ type: "success", text: "Employee added to your team!" });
-      setEmpName("");
+      if (!query.trim()) return;
+      setSearching(true);
+      const res = await searchEmployees(query);
+      setResults(res.data.users);
     } catch (err) {
-      setMessage({
+      setAlert({
         type: "error",
-        text: err.response?.data?.message || "Failed to add employee",
+        message: err.response?.data?.message || "Search failed",
       });
     } finally {
-      setLoading(false);
+      setSearching(false);
+    }
+  };
+
+  const handleAdd = async (empId) => {
+    try {
+      setAddingId(empId);
+      await addEmployee(empId);
+      setAlert({ type: "success", message: "Employee added to your team!" });
+      setResults([]);
+      setQuery("");
+    } catch (err) {
+      setAlert({
+        type: "error",
+        message: err.response?.data?.message || "Failed to add employee",
+      });
+    } finally {
+      setAddingId(null);
     }
   };
 
   useEffect(() => {
-    if (!message) return;
-    const timer = setTimeout(() => setMessage(null), 5000);
+    if (!alert) return;
+    const timer = setTimeout(() => setAlert(null), 5000);
     return () => clearTimeout(timer);
-  }, [message]);
+  }, [alert]);
 
   return (
     <div className="card mb-6 max-w-lg">
-      {message && (
+      {alert && (
         <div className="mb-4">
-          <Alert type={message.type} message={message.text} />
+          <Alert type={alert.type} message={alert.message} />
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <label htmlFor="empname" className="block mb-2 font-semibold">
-          Employee Name:
-        </label>
-
+      <div className="space-y-3 mt-3">
         <input
-          type="text"
-          id="empname"
-          value={empName}
-          onChange={(e) => setEmpName(e.target.value)}
-          placeholder="Enter Employee Name"
+          placeholder="Enter Employee Name or ID"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
           className="input"
-          required
         />
 
-        <button
-          type="submit"
-          className="btn btn-primary btn-primary-glow w-full disabled:opacity-50"
-          disabled={loading}
+        <Button
+          onClick={search}
+          className="btn-success btn-success-glow w-full"
+          disabled={searching}
         >
-          {loading ? "Adding..." : "Add Employee"}
-        </button>
-      </form>
+          {searching ? "Searching..." : "Search"}
+        </Button>
+
+        {results.length === 0 && !searching && query && (
+          <p className="text-sm text-slate-500 text-center">No users found</p>
+        )}
+
+        {results.length > 0 && (
+          <div className="border rounded p-2 space-y-2">
+            {results.map((emp) => (
+              <div
+                key={emp._id}
+                className="flex justify-between items-center p-2 bg-slate-50 rounded"
+              >
+                <div>
+                  <p className="font-medium">{emp.userName}</p>
+                  <p className="text-xs text-gray-500">{emp.empId}</p>
+                </div>
+
+                <Button
+                  disabled={addingId === emp.empId}
+                  onClick={() => handleAdd(emp.empId)}
+                  className="btn-primary btn-primary-glow w-1/2"
+                >
+                  {addingId === emp.empId ? "Adding..." : "Add"}
+                </Button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

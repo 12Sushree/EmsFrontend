@@ -1,20 +1,25 @@
-import SideBar from "../../components/common/SideBar";
 import CreateAnnouncement from "../../components/manager/CreateAnnouncement";
 import AnnouncementList from "../../components/common/AnnouncementList";
+import DashboardLayout from "../../components/common/DashboardLayout";
+import PageHeader from "../../components/common/PageHeader";
 
 export default function Announcement() {
   return (
-    <div className="flex min-h-screen bg-slate-100">
-      <SideBar />
+    <DashboardLayout>
+      <PageHeader
+        title="Announcements"
+        subtitle="Create and manage team announcements"
+      />
 
-      <main className="flex-1 p-6">
-        <h1 className="text-2xl font-bold text-slate-900 mb-4">
-          Announcements
-        </h1>
+      <main className="space-y-8">
+        <section className="mt-8">
+          <CreateAnnouncement />
+        </section>
 
-        <CreateAnnouncement />
-        <AnnouncementList />
+        <section>
+          <AnnouncementList />
+        </section>
       </main>
-    </div>
+    </DashboardLayout>
   );
 }

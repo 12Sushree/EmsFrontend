@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import api from "../../services/axios";
 import Alert from "../common/Alert";
 
 function ProfileCard() {
   const [user, setUser] = useState(null);
-  const [message, setMessage] = useState(null);
+  const [alert, setAlert] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -12,10 +13,12 @@ function ProfileCard() {
         const res = await api.get("/user/profile");
         setUser(res.data.user);
       } catch (err) {
-        setMessage({
+        setAlert({
           type: "error",
-          text: err.response?.data?.message || "Failed to load profile",
+          message: err.response?.data?.message || "Failed to load profile",
         });
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -23,37 +26,63 @@ function ProfileCard() {
   }, []);
 
   useEffect(() => {
-    if (!message) return;
-    const timer = setTimeout(() => setMessage(null), 5000);
+    if (!alert) return;
+    const timer = setTimeout(() => setAlert(null), 5000);
     return () => clearTimeout(timer);
-  }, [message]);
+  }, [alert]);
 
   if (!user) return <p className="text-sm text-gray-500">Loading profile...</p>;
 
   return (
     <div className="card card-hover space-y-2">
-      {message && (
+      {alert && (
         <div className="card">
-          <Alert type={message.type} message={message.text} />
+          <Alert type={alert.type} message={alert.message} />
         </div>
       )}
 
-      <p>
-        <strong>Name:</strong> {user.userName}
-      </p>
+      {loading && <p className="text-sm text-gray-500">Loading Profile.....</p>}
 
-      <p>
-        <strong>Email:</strong> {user.email}
-      </p>
+      {!loading && user && (
+        <>
+          <p>
+            <strong>Employee ID:</strong> {user.empId}
+          </p>
 
-      <p>
-        <strong>Role:</strong> {user.role}
-      </p>
+          <p>
+            <strong>Name:</strong> {user.userName}
+          </p>
 
-      {user.managerId && (
-        <p>
-          <strong>Manager:</strong> {user.managerId.userName}
-        </p>
+          <p>
+            <strong>Email:</strong> {user.email}
+          </p>
+
+          {user.phone && (
+            <p>
+              <strong>Phone:</strong> {user.phone}
+            </p>
+          )}
+
+          <p>
+            <strong>Role:</strong> {user.role}
+          </p>
+
+          {user.designation && (
+            <p>
+              <strong>Designation:</strong> {user.designation}
+            </p>
+          )}
+
+          <p>
+            <strong>Status:</strong> {user.employmentStatus}
+          </p>
+
+          {user.reportingManager && (
+            <p>
+              <strong>Manager:</strong> {user.reportingManager.userName}
+            </p>
+          )}
+        </>
       )}
     </div>
   );

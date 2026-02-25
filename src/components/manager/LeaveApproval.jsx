@@ -1,22 +1,29 @@
-import React, { useEffect, useState } from "react";
-import { getAllLeaves, updateLeave } from "../../features/manager/managerAPI";
+import { useEffect, useState } from "react";
+import { getAllLeaves, updateLeave } from "../../store/manager/managerAPI";
 import Alert from "../common/Alert";
+import Button from "../common/Button";
 
 function LeaveApproval() {
   const [leaves, setLeaves] = useState([]);
-  const [message, setMessage] = useState(null);
+  const [alert, setAlert] = useState(null);
   const [loadingId, setLoadingId] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
-  const allLeaves = async () => {
-    setLoading(true);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const allLeaves = async (page = 1) => {
     try {
-      const res = await getAllLeaves();
+      setLoading(true);
+      const res = await getAllLeaves(page);
       setLeaves(res.data.data || []);
+      setTotalPages(res.data.pages || 1);
     } catch (err) {
-      setMessage({
+      setAlert({
         type: "error",
-        text: err.response?.data?.message || "Failed to fetch leaves",
+        message: err.response?.data?.message || "Failed to fetch leaves",
       });
     } finally {
       setLoading(false);
@@ -24,19 +31,19 @@ function LeaveApproval() {
   };
 
   useEffect(() => {
-    allLeaves();
-  }, []);
+    allLeaves(page);
+  }, [page]);
 
   const update = async (id, status) => {
     try {
       setLoadingId(id);
       await updateLeave(id, status);
-      setMessage({ type: "success", text: `Leave ${status}` });
-      allLeaves();
+      setAlert({ type: "success", message: `Leave ${status}` });
+      allLeaves(page);
     } catch (err) {
-      setMessage({
+      setAlert({
         type: "error",
-        text: err.response?.data?.message || "Failed to update leave",
+        message: err.response?.data?.message || "Failed to update leave",
       });
     } finally {
       setLoadingId(null);
@@ -44,27 +51,36 @@ function LeaveApproval() {
   };
 
   useEffect(() => {
-    if (!message) return;
-    const timer = setTimeout(() => setMessage(null), 5000);
+    if (!alert) return;
+    const timer = setTimeout(() => setAlert(null), 5000);
     return () => clearTimeout(timer);
-  }, [message]);
+  }, [alert]);
 
   useEffect(() => {
+    if (alert) return;
     if (!loading && leaves.length === 0) {
-      setMessage({
+      setAlert({
         type: "info",
-        text: "No Leave Record Found!",
+        message: "No Leave Record Found!",
       });
     }
-  }, [leaves, loading]);
+  }, [leaves, loading, alert]);
+
+  if (loading) {
+    return (
+      <div className="card text-center text-slate-500">
+        Loading leave requests.....
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white p-5 shadow rounded-xl">
       <h2 className="font-bold text-lg mb-4">Leave Requests</h2>
 
-      {message && (
+      {alert && (
         <div className="mb-4">
-          <Alert type={message.type} message={message.text} />
+          <Alert type={alert.type} message={alert.message} />
         </div>
       )}
 
@@ -80,47 +96,81 @@ function LeaveApproval() {
               <th className="table-th">Action</th>
             </tr>
           </thead>
+
           <tbody>
-            {leaves.map((leave) => (
-              <tr key={leave._id} className="hover:bg-slate-50 transition">
-                <td className="table-td">{leave.userId?.userName}</td>
-                <td className="table-td">
-                  {new Date(leave.from).toLocaleDateString("en-IN")}
-                </td>
-                <td className="table-td">
-                  {new Date(leave.to).toLocaleDateString("en-IN")}
-                </td>
-                <td className="table-td">{leave.reason}</td>
-                <td className="table-td">{leave.status}</td>
-                <td className="table-td flex gap-2">
-                  <button
-                    onClick={() => update(leave._id, "Approved")}
-                    disabled={loadingId === leave._id}
-                    className={`px-3 py-1 rounded text-white ${
-                      loadingId === leave._id
-                        ? "bg-green-300 cursor-not-allowed"
-                        : "btn btn-success btn-success-glow"
-                    }`}
-                  >
-                    ✔
-                  </button>
-                  <button
-                    onClick={() => update(leave._id, "Rejected")}
-                    disabled={loadingId === leave._id}
-                    className={`px-3 py-1 rounded text-white ${
-                      loadingId === leave._id
-                        ? "bg-red-300 cursor-not-allowed"
-                        : "btn btn-danger btn-danger-glow"
-                    }`}
-                  >
-                    ✖
-                  </button>
-                </td>
-              </tr>
-            ))}
+            {leaves.map((leave) => {
+              const leaveDate = new Date(leave.to);
+              leaveDate.setHours(0, 0, 0, 0);
+
+              const isExpired = leaveDate < today;
+              const isProcessed = leave.status !== "Pending";
+              const isLoading = loadingId === leave._id;
+
+              const disableButtons = isExpired || isProcessed || isLoading;
+
+              return (
+                <tr key={leave._id} className="hover:bg-slate-50 transition">
+                  <td className="table-td">{leave.userId?.userName}</td>
+                  <td className="table-td">
+                    {new Date(leave.from).toLocaleDateString("en-IN")}
+                  </td>
+                  <td className="table-td">
+                    {new Date(leave.to).toLocaleDateString("en-IN")}
+                  </td>
+                  <td className="table-td">{leave.reason}</td>
+                  <td className="table-td font-semibold">{leave.status}</td>
+                  <td className="table-td flex gap-2">
+                    <Button
+                      onClick={() => update(leave._id, "Approved")}
+                      disabled={disableButtons}
+                      className={`px-3 py-1 rounded text-white ${
+                        disableButtons
+                          ? "bg-green-200 cursor-not-allowed"
+                          : "btn-success btn-success-glow"
+                      }`}
+                    >
+                      ✔
+                    </Button>
+                    <Button
+                      onClick={() => update(leave._id, "Rejected")}
+                      disabled={disableButtons}
+                      className={`px-3 py-1 rounded text-white ${
+                        disableButtons
+                          ? "bg-red-200 cursor-not-allowed"
+                          : "btn-danger btn-danger-glow"
+                      }`}
+                    >
+                      ✖
+                    </Button>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
+
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center gap-4 mt-6">
+          <Button
+            disabled={page === 1}
+            onClick={() => setPage((prev) => prev - 1)}
+          >
+            ⬅ Prev
+          </Button>
+
+          <span className="text-sm font-semibold">
+            Page {page} of {totalPages}
+          </span>
+
+          <Button
+            disabled={page === totalPages}
+            onClick={() => setPage((prev) => prev + 1)}
+          >
+            Next ➡
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

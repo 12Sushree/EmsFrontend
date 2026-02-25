@@ -1,20 +1,19 @@
-import React from "react";
-import SideBar from "../../components/common/SideBar";
+import DashboardLayout from "../../components/common/DashboardLayout";
+import PageHeader from "../../components/common/PageHeader";
 import MonitorProgress from "../../components/manager/MonitorProgress";
 
 function Monitor() {
   return (
-    <div className="flex min-h-screen bg-slate-100">
-      <SideBar />
+    <DashboardLayout>
+      <PageHeader
+        title="Team Progress"
+        subtitle="Track and monitor your team's task performance"
+      />
 
-      <main className="flex-1 p-6">
-        <h1 className="text-2xl font-bold text-slate-900 mb-6">
-          Team Progress
-        </h1>
-
+      <main className="mt-8">
         <MonitorProgress />
       </main>
-    </div>
+    </DashboardLayout>
   );
 }
 

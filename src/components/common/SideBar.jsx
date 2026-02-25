@@ -1,65 +1,74 @@
-import { Link, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
-import { logout } from "../../features/auth/authSlice";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import Button from "./Button";
+import { useDispatch, useSelector } from "react-redux";
+import { logoutUser } from "../../store/auth/authSlice";
 
 export default function SideBar() {
   const { user } = useSelector((state) => state.auth);
-  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const logoutHandler = () => {
-    dispatch(logout());
-    navigate("/");
+  if (!user) return null;
+
+  const logoutHandler = async () => {
+    try {
+      await dispatch(logoutUser()).unwrap();
+      navigate("/login");
+    } catch (err) {
+      console.error("Logout failed", err);
+    }
   };
+
+  const linkClass = ({ isActive }) =>
+    `p-2 rounded ${isActive ? "bg-blue-700" : "hover:bg-blue-700"}`;
 
   return (
     <div className="w-64 min-h-screen bg-blue-900 text-white p-4">
       <h2 className="text-xl text-white font-bold mb-6">EMS Portal</h2>
 
       <nav className="flex flex-col gap-3">
-        <Link to="/" className="hover:bg-blue-700 p-2 rounded">
+        <NavLink to="/" className={linkClass}>
           Dashboard
-        </Link>
+        </NavLink>
 
-        <Link to="/profile" className="hover:bg-blue-700 p-2 rounded">
+        <NavLink to="/profile" className={linkClass}>
           My Profile
-        </Link>
+        </NavLink>
 
         {user?.role === "Employee" && (
           <>
-            <Link to="/leave" className="hover:bg-blue-700 p-2 rounded">
+            <NavLink to="/employee/leave" className={linkClass}>
               Apply Leave
-            </Link>
+            </NavLink>
 
-            <Link to="/attendance" className="hover:bg-blue-700 p-2 rounded">
+            <NavLink to="/employee/attendance" className={linkClass}>
               Attendance History
-            </Link>
+            </NavLink>
           </>
         )}
 
         {user?.role === "Manager" && (
           <>
-            <Link to="/monitor" className="hover:bg-blue-700 p-2 rounded">
+            <NavLink to="/manager/monitor" className={linkClass}>
               Monitor Progress
-            </Link>
+            </NavLink>
 
-            <Link to="/add-emp" className="hover:bg-blue-700 p-2 rounded">
+            <NavLink to="/manager/add-emp" className={linkClass}>
               Add Employee
-            </Link>
+            </NavLink>
 
-            <Link to="/announcement" className="hover:bg-blue-700 p-2 rounded">
+            <NavLink to="/manager/announcement" className={linkClass}>
               Announcements
-            </Link>
+            </NavLink>
           </>
         )}
       </nav>
 
       {user && (
         <div className="mt-10">
-          <button onClick={logoutHandler} className="btn btn-danger w-full">
+          <Button onClick={logoutHandler} className="btn-danger w-full">
             Logout
-          </button>
+          </Button>
         </div>
       )}
     </div>

@@ -1,18 +1,27 @@
-import SideBar from "../../components/common/SideBar";
+import DashboardLayout from "../../components/common/DashboardLayout";
+import PageHeader from "../../components/common/PageHeader";
 import LeaveForm from "../../components/employee/LeaveForm";
 import MyLeaves from "../../components/employee/MyLeaves";
 
 export default function Leave() {
   return (
-    <div className="flex min-h-screen bg-slate-100">
-      <SideBar />
+    <DashboardLayout>
+      <PageHeader
+        title="Leave Management"
+        subtitle="Apply for leave and track your leave history"
+      />
 
-      <div className="flex-1 p-6">
-        <h1 className="text-2xl font-bold mb-4">Leave Management</h1>
+      <main className="space-y-8">
+        <section className="mt-8">
+          <h2 className="text-lg font-semibold mb-4">Apply for Leave</h2>
+          <LeaveForm />
+        </section>
 
-        <LeaveForm />
-        <MyLeaves />
-      </div>
-    </div>
+        <section className="mt-8">
+          <h2 className="text-lg font-semibold mb-4">My Leave Requests</h2>
+          <MyLeaves />
+        </section>
+      </main>
+    </DashboardLayout>
   );
 }

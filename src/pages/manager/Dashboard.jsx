@@ -1,25 +1,31 @@
-import React from "react";
-import SideBar from "../../components/common/SideBar";
 import TeamSummary from "../../components/manager/TeamSummary";
 import AssignTask from "../../components/manager/AssignTask";
 import LeaveApproval from "../../components/manager/LeaveApproval";
-import MonitorProgress from "../../components/manager/MonitorProgress"; // optional, include if needed
+import DashboardLayout from "../../components/common/DashboardLayout";
+import PageHeader from "../../components/common/PageHeader";
 
 function MngDashboard() {
   return (
-    <div className="flex min-h-screen bg-slate-100">
-      <SideBar />
+    <DashboardLayout>
+      <PageHeader
+        title="Manager Dashboard"
+        subtitle="Manage your team details, tasks and leaves"
+      />
 
-      <main className="flex-1 p-6">
-        <h1 className="text-2xl font-bold text-slate-900 mb-6">
-          Manager Dashboard
-        </h1>
+      <main className="space-y=8">
+        <section className="mt-8">
+          <TeamSummary />
+        </section>
 
-        <TeamSummary />
-        <AssignTask />
-        <LeaveApproval />
+        <section className="mt-8">
+          <AssignTask />
+        </section>
+
+        <section className="mt-8">
+          <LeaveApproval />
+        </section>
       </main>
-    </div>
+    </DashboardLayout>
   );
 }
 

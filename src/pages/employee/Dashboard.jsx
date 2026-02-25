@@ -2,32 +2,32 @@ import AttendanceCard from "../../components/employee/AttendanceCard";
 import PerformanceCard from "../../components/employee/PerformanceCard";
 import TaskList from "../../components/employee/TaskList";
 import AnnouncementList from "../../components/common/AnnouncementList";
-import SideBar from "../../components/common/SideBar";
+import DashboardLayout from "../../components/common/DashboardLayout";
+import PageHeader from "../../components/common/PageHeader";
 
 function EmpDashboard() {
   return (
-    <div className="flex min-h-screen bg-slate-100">
-      <SideBar />
+    <DashboardLayout>
+      <PageHeader
+        title="Employee Dashboard"
+        subtitle="Overview of your performance, attendance and tasks"
+      />
 
-      <div className="flex-1 p-6">
-        <h1 className="text-2xl font-bold text-slate-900 mb-4">
-          Employee Dashboard
-        </h1>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+      <main className="space-y-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-6">
           <AttendanceCard />
           <PerformanceCard />
         </div>
 
-        <div className="mt-6">
+        <section className="mt-8">
           <TaskList />
-        </div>
+        </section>
 
-        <div className="mt-6">
+        <section className="mt-8">
           <AnnouncementList />
-        </div>
-      </div>
-    </div>
+        </section>
+      </main>
+    </DashboardLayout>
   );
 }
 

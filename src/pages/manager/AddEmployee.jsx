@@ -1,18 +1,19 @@
-import React from "react";
-import SideBar from "../../components/common/SideBar";
+import DashboardLayout from "../../components/common/DashboardLayout";
+import PageHeader from "../../components/common/PageHeader";
 import AddEmployeeForm from "../../components/manager/AddEmployeeForm";
 
 function AddEmployee() {
   return (
-    <div className="flex min-h-screen bg-slate-100">
-      <SideBar />
+    <DashboardLayout>
+      <PageHeader
+        title="Add Employee"
+        subtitle="Search and assign employees to your team"
+      />
 
-      <main className="flex-1 p-6">
-        <h1 className="text-2xl font-bold text-slate-900 mb-4">Add Employee</h1>
-
+      <main className="mt-8">
         <AddEmployeeForm />
       </main>
-    </div>
+    </DashboardLayout>
   );
 }
 

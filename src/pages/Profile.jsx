@@ -1,17 +1,36 @@
-import React from "react";
-import SideBar from "../components/common/SideBar";
+import { useNavigate } from "react-router-dom";
+import Button from "../components/common/Button";
+import DashboardLayout from "../components/common/DashboardLayout";
+import PageHeader from "../components/common/PageHeader";
 import ProfileCard from "../components/common/ProfileCard";
 
 function Profile() {
-  return (
-    <div className="flex min-h-screen bg-slate-100">
-      <SideBar />
+  const navigate = useNavigate();
 
-      <div className="flex-1 p-6">
-        <h1 className="text-2xl font-bold text-slate-900 mb-6">My Profile</h1>
+  return (
+    <DashboardLayout>
+      <PageHeader title="My Profile" />
+
+      <div className="bg-white p-6 rounded shadow">
         <ProfileCard />
+
+        <div className="mt-6 flex flex-col sm-flex-row gap-4">
+          <Button
+            onClick={() => navigate("/update-profile")}
+            className="btn-success btn-success-glow flex-1"
+          >
+            Update Profile
+          </Button>
+
+          <Button
+            onClick={() => navigate("/change-password")}
+            className="btn-danger btn-danger-glow flex-1"
+          >
+            Change Password
+          </Button>
+        </div>
       </div>
-    </div>
+    </DashboardLayout>
   );
 }
 

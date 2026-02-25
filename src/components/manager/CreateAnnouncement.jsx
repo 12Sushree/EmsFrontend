@@ -1,23 +1,47 @@
 import { useState, useEffect } from "react";
-import { createAnnouncement } from "../../features/manager/managerAPI";
+import { createAnnouncement } from "../../store/manager/managerAPI";
 import Alert from "../common/Alert";
+import { useForm } from "react-hook-form";
+import Input from "../common/Input";
+import Textarea from "../common/Textarea";
+import Button from "../common/Button";
 
 export default function CreateAnnouncement() {
-  const [form, setForm] = useState({ title: "", message: "" });
-  const [message, setMessage] = useState(null);
+  const [alert, setAlert] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const submit = async (e) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isValid },
+    watch,
+  } = useForm({
+    mode: "onChange",
+    defaultValues: {
+      title: "",
+      message: "",
+    },
+  });
+
+  const msg = watch("message", "");
+
+  const submit = async (data) => {
     try {
       setLoading(true);
-      await createAnnouncement(form);
-      setMessage({ type: "success", text: "Announcement posted!" });
-      setForm({ title: "", message: "" });
+      await createAnnouncement({
+        title: data.title.trim(),
+        message: data.message.trim(),
+      });
+      setAlert({ type: "success", message: "Announcement posted!" });
+      reset({
+        title: "",
+        message: "",
+      });
     } catch (err) {
-      setMessage({
+      setAlert({
         type: "error",
-        text: err.response?.data?.message || "Failed to post announcement",
+        message: err.response?.data?.message || "Failed to post announcement",
       });
     } finally {
       setLoading(false);
@@ -25,46 +49,68 @@ export default function CreateAnnouncement() {
   };
 
   useEffect(() => {
-    if (!message) return;
-    const timer = setTimeout(() => setMessage(null), 5000);
+    if (!alert) return;
+    const timer = setTimeout(() => setAlert(null), 5000);
     return () => clearTimeout(timer);
-  }, [message]);
+  }, [alert]);
 
   return (
     <div className="card mb-6 max-w-lg">
       <h2 className="font-bold text-lg mb-4">Create Announcement</h2>
 
-      {message && (
+      {alert && (
         <div className="mb-4">
-          <Alert type={message.type} message={message.text} />
+          <Alert type={alert.type} message={alert.message} />
         </div>
       )}
 
-      <form onSubmit={submit} className="space-y-4">
-        <input
-          placeholder="Title"
-          value={form.title}
-          onChange={(e) => setForm({ ...form, title: e.target.value })}
-          className="input"
-          required
-        />
+      <form onSubmit={handleSubmit(submit)} className="space-y-4">
+        <div>
+          <Input
+            placeholder="Title"
+            maxLength={100}
+            {...register("title", {
+              required: "Announcement Title is required",
+              validate: (value) =>
+                value.trim() !== "" || "Title can't be empty!",
+              maxLength: {
+                value: 100,
+                message: "Announcement Title can't exceed 100 Characters",
+              },
+            })}
+          />
+          {errors.title && (
+            <span className="text-red-600">{errors.title.message}</span>
+          )}
+        </div>
 
-        <textarea
-          placeholder="Message"
-          value={form.message}
-          onChange={(e) => setForm({ ...form, message: e.target.value })}
-          className="input"
-          rows="3"
-          required
-        />
+        <div>
+          <Textarea
+            placeholder="Message"
+            maxLength={2000}
+            {...register("message", {
+              required: "Announcement Message is required",
+              validate: (value) =>
+                value.trim() !== "" || "Message can't be empty!",
+              maxLength: {
+                value: 2000,
+                message: "Maximum 2000 characters allowed",
+              },
+            })}
+          />
+          <p className="flex justify-between">
+            <span className="text-red-600">{errors.message?.message}</span>
+            <span className="text-xs text-slate-500">{msg.length} / 2000</span>
+          </p>
+        </div>
 
-        <button
+        <Button
           type="submit"
-          className="btn btn-primary btn-primary-glow w-full disabled:opacity-50"
-          disabled={loading}
+          className="btn-primary btn-primary-glow w-full"
+          disabled={loading || !isValid}
         >
           {loading ? "Posting..." : "Post Announcement"}
-        </button>
+        </Button>
       </form>
     </div>
   );
