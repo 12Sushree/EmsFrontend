@@ -39,7 +39,7 @@ export default function TaskList() {
     },
     {
       value: "Done",
-      label: "Completed",
+      label: "Done",
     },
   ];
 
