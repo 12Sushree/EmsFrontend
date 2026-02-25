@@ -13,10 +13,6 @@ function App() {
     if (token && !user) dispatch(loadUser());
   }, [dispatch, user]);
 
-  if (loading) {
-    return null;
-  }
-
   return (
     <>
       <Outlet />
