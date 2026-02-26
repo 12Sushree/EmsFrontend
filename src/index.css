@@ -2,33 +2,33 @@
 
 @layer base {
   body {
-    @apply bg-slate-100 text-slate-800 antialiased;
+    @apply bg-slate-100 text-slate-800 antialiased text-sm sm:text-base;
   }
 
   h1 {
-    @apply text-2xl font-bold text-slate-900;
+    @apply text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900;
   }
 
   h2 {
-    @apply text-xl font-semibold text-slate-900;
+    @apply text-lg sm:text-xl lg:text-2xl font-semibold text-slate-900;
   }
 
   h3 {
-    @apply text-lg font-semibold;
+    @apply text-base sm:text-lg font-semibold;
   }
 }
 
 @layer components {
   .card {
-    @apply bg-white rounded-xl shadow-sm border border-slate-200 p-5;
+    @apply bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-5 lg:p-6 w-full;
   }
 
   .card-hover {
-    @apply transition hover:shadow-md hover:-translate-y-0.5;
+    @apply transition-all duration-200 ease-in-out hover:shadow-md hover:-translate-y-0.5;
   }
 
   .btn {
-    @apply px-4 py-2 rounded-lg font-medium transition hover:cursor-pointer;
+    @apply px-3 sm:px-4 py-2 rounded-lg font-medium transition-all duration-150 active:scale-95 text-sm sm:text-base hover:cursor-pointer;
   }
 
   .btn-success {
@@ -56,19 +56,23 @@
   }
 
   .input {
-    @apply w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500;
+    @apply w-full px-3 py-2 border rounded-lg  text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500;
+  }
+
+  .table-container {
+    @apply w-full overflow-x-auto;
   }
 
   .table-th {
-    @apply px-4 py-2 text-left text-sm font-semibold text-slate-600;
+    @apply px-3 sm:px-4 py-2 text-left text-xs sm:text-sm font-semibold text-slate-600;
   }
 
   .table-td {
-    @apply px-4 py-2 text-sm text-slate-700;
+    @apply px-3 sm:px-4 py-2 text-xs sm:text-sm text-slate-700;
   }
 
   .alert {
-    @apply flex items-start gap-3 p-4 rounded-lg border text-sm transition-opacity duration-300;
+    @apply flex items-start gap-3 p-3 sm:p-4 rounded-lg border text-xs sm:text-sm transition-opacity duration-300;
   }
 
   .alert-success {
@@ -85,5 +89,13 @@
 
   .alert-warning {
     @apply bg-yellow-50 text-yellow-700 border-yellow-200;
+  }
+
+  .container-page {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .grid-auto {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6;
   }
 }

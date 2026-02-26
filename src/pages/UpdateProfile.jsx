@@ -5,7 +5,9 @@ import { updateProfile } from "../store/auth/profileAPI";
 import Alert from "../components/common/Alert";
 import Input from "../components/common/Input";
 import Button from "../components/common/Button";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import DashboardLayout from "../components/common/DashboardLayout";
+import PageHeader from "../components/common/PageHeader";
 
 export default function UpdateProfile() {
   const {
@@ -65,10 +67,9 @@ export default function UpdateProfile() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-indigo-600 to-blue-700">
-      <div className="card mb-6 w-md">
-        <h2 className="font-bold text-lg mb-4">Update Profile</h2>
-
+    <DashboardLayout>
+      <PageHeader title="Update Profile" subtitle="Update your profile" />
+      <div className="card max-w-md mx-auto">
         {alert && (
           <div className="card">
             <Alert type={alert.type} message={alert.message} />
@@ -131,6 +132,6 @@ export default function UpdateProfile() {
           </Button>
         </form>
       </div>
-    </div>
+    </DashboardLayout>
   );
 }

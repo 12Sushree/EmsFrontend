@@ -9,7 +9,7 @@ export default function Button({
     <button
       type={type}
       disabled={disabled}
-      className={`btn disabled:opacity-50 ${className}`}
+      className={`btn disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
       {...props}
     >
       {children}

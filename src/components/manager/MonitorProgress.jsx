@@ -65,7 +65,7 @@ function MonitorProgress() {
             <Button onClick={fetchData}>⟳</Button>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid-auto">
             <div className="p-2 bg-slate-50 rounded-lg text-center">
               <p className="text-sm text-slate-500">Total Tasks</p>
               <h2 className="text-xl font-bold">{data.totalTasks ?? 0}</h2>
@@ -85,7 +85,7 @@ function MonitorProgress() {
               </h2>
             </div>
 
-            <div className="col-span-3 p-2 bg-slate-50 rounded-lg text-center">
+            <div className="lg:col-span-3 p-2 bg-slate-50 rounded-lg text-center">
               <p className="text-sm text-slate-500">Completion Rate</p>
               <h2 className="text-xl font-bold text-blue-600">
                 {data.completionRate ?? 0}%

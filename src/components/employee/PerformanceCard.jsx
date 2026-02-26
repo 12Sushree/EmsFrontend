@@ -64,7 +64,7 @@ function PerformanceCard() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid-auto">
         <div className="p-2 bg-slate-50 rounded-lg text-center">
           <p className="text-sm text-slate-500">Total Hours</p>
           <p className="text-xl font-bold text-blue-600">

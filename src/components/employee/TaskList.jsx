@@ -113,7 +113,7 @@ export default function TaskList() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+      <div className="grid-auto">
         {fields.map((task, index) => (
           <div key={task._id} className="p-4 bg-slate-50 rounded-xl shadow-sm">
             <h3 className="font-semibold mb-1">{task.title}</h3>

@@ -5,7 +5,7 @@ export default function DashboardLayout({ children }) {
     <div className="flex min-h-screen bg-slate-100">
       <SideBar />
       <main className="flex-1 p-6 overflow-y-auto">
-        <div className="max-w-7xl mx-auto">{children}</div>
+        <div className="container-page">{children}</div>
       </main>
     </div>
   );

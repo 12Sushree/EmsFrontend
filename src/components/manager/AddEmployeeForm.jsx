@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { addEmployee, searchEmployees } from "../../store/manager/managerAPI";
 import Alert from "../common/Alert";
-import Input from "../common/Input";
 import Button from "../common/Button";
 
 function AddEmployeeForm() {

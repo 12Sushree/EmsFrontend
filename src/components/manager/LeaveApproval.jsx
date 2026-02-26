@@ -85,7 +85,7 @@ function LeaveApproval() {
       )}
 
       <div className="overflow-x-auto">
-        <table className="w-full rounded overflow-hidden">
+        <table className="table-container">
           <thead className="bg-slate-100">
             <tr>
               <th className="table-th">Employee</th>

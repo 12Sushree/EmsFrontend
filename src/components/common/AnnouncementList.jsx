@@ -11,19 +11,12 @@ function AnnouncementList() {
   const [totalPages, setTotalPages] = useState(1);
 
   const fetchData = async () => {
+    setLoading(true);
+    setAlert(null);
     try {
       const res = await getAnnouncements(page);
       setAnnouncements(res.data.data);
       setTotalPages(Math.max(res.data.pages, 1));
-
-      if (res.data.data.length === 0) {
-        setAlert({
-          type: "info",
-          message: "No announcements available",
-        });
-      } else {
-        setAlert(null);
-      }
     } catch (err) {
       setAlert({
         type: "error",
@@ -35,6 +28,7 @@ function AnnouncementList() {
   };
 
   useEffect(() => {
+    setLoading(true);
     fetchData();
   }, [page]);
 
@@ -50,31 +44,33 @@ function AnnouncementList() {
 
   return (
     <div className="card">
-      <div className="flex justify-between items-center">
-        <h2 className="font-bold text-lg mb-4">Announcements</h2>
+      <div className="flex justify-between items-center mb-4">
+        <h2>Announcements</h2>
         <Button onClick={fetchData}>⟳</Button>
       </div>
 
-      {alert && (
-        <div className="card">
-          <Alert type={alert.type} message={alert.message} />
+      {alert && <Alert type={alert.type} message={alert.message} />}
+
+      {loading && (
+        <p className="text-sm text-slate-500">Loading announcements...</p>
+      )}
+
+      {!loading && announcements.length === 0 && (
+        <div className="text-sm text-slate-500 text-center py-6">
+          No announcements available 📭
         </div>
       )}
 
-      {loading && (
-        <p className="text-sm text-gray-500">Loading announcements...</p>
-      )}
-
       {!loading && announcements.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div className="grid-auto">
           {announcements.map((announcement) => (
             <div
               key={announcement._id}
-              className="p-4 bg-slate-100 rounded-xl shadow"
+              className="p-4 bg-slate-100 rounded-xl shadow card-hover"
             >
               <h3 className="font-semibold">{announcement.title}</h3>
-              <p className="text-sm text-gray-600">{announcement.message}</p>
-              <p className="text-xs text-gray-500 mt-2">
+              <p className="text-sm text-slate-600">{announcement.message}</p>
+              <p className="text-xs text-slate-500 mt-2">
                 Posted by {announcement.createdBy?.userName || "Admin"}
               </p>
             </div>
@@ -85,7 +81,7 @@ function AnnouncementList() {
       {totalPages > 1 && (
         <div className="flex justify-center items-center gap-4 mt-6">
           <Button
-            className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+            className="bg-slate-200 hover:bg-slate-300"
             disabled={page === 1}
             onClick={() => setPage((prev) => prev - 1)}
           >
@@ -97,7 +93,7 @@ function AnnouncementList() {
           </span>
 
           <Button
-            className="bg-gray-200"
+            className="bg-slate-200 hover:bg-slate-300"
             disabled={page === totalPages}
             onClick={() => setPage((prev) => prev + 1)}
           >
