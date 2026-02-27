@@ -6,7 +6,7 @@ import { getAccessToken } from "./utils/token";
 
 function App() {
   const dispatch = useDispatch();
-  const { user, loading } = useSelector((state) => state.auth);
+  const { user } = useSelector((state) => state.auth);
 
   useEffect(() => {
     const token = getAccessToken();

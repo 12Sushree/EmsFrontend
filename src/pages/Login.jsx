@@ -52,7 +52,7 @@ export default function Login() {
   }, [alert]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-600 to-indigo-700">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-b from-indigo-500 via-cyan-500 to-blue-500">
       <div className="card mb-6 w-sm">
         <h2 className="text-2xl font-bold text-center mb-4">Login</h2>
 
@@ -119,7 +119,9 @@ export default function Login() {
           </Button>
         </form>
 
-        <Link to="/forgot-password">Forgot Password?</Link>
+        <Link className="text-blue-600 font-semibold" to="/forgot-password">
+          Forgot Password?
+        </Link>
 
         <p className="text-center mt-4 text-sm">
           Don&apos;t have an account?{" "}

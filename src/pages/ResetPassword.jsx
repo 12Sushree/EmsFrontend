@@ -41,7 +41,7 @@ export default function ResetPassword() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-600 to-indigo-700">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-b from-indigo-500 via-cyan-500 to-blue-500">
       <div className="card mb-6 w-sm">
         <h2 className="text-2xl font-bold text-center mb-4">Reset Password</h2>
 

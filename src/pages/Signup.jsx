@@ -69,7 +69,7 @@ function Signup() {
   }, [alert]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-indigo-600 to-blue-700">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-b from-indigo-500 via-cyan-500 to-blue-500">
       <div className="card mb-6 w-md">
         <h2 className="text-2xl font-bold text-center mb-4">Create Account</h2>
 
