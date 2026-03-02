@@ -14,7 +14,7 @@ export default function EmployeeActions({ employee }) {
   const [loading, setLoading] = useState(false);
   const { register, reset } = useForm({
     defaultValues: {
-      designation: "",
+      designation: employee.designation || "",
     },
   });
 
