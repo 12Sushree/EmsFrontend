@@ -35,6 +35,7 @@ function MonitorProgress() {
 
   useEffect(() => {
     if (alert) return;
+
     if (!loading && !data) {
       setAlert({
         type: "info",

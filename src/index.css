@@ -31,6 +31,14 @@
     @apply px-3 sm:px-4 py-2 rounded-lg font-medium transition-all duration-150 active:scale-95 text-sm sm:text-base hover:cursor-pointer;
   }
 
+  .btn-secondary {
+    @apply bg-slate-600 text-black hover:bg-slate-700;
+  }
+
+  .btn-secondary-glow {
+    @apply shadow-md shadow-slate-200;
+  }
+
   .btn-success {
     @apply bg-green-600 text-white hover:bg-green-700;
   }

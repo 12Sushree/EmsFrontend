@@ -214,7 +214,7 @@ function TeamSummary() {
 
             <div className="flex justify-center gap-4">
               <Button
-                className="btn-secondary"
+                className="btn-secondary btn-secondary-glow"
                 onClick={() => setConfirmEmp(null)}
               >
                 Cancel
