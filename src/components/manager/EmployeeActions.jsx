@@ -12,7 +12,7 @@ import Button from "../common/Button";
 export default function EmployeeActions({ employee }) {
   const [alert, setAlert] = useState(null);
   const [loading, setLoading] = useState(false);
-  const { register, reset } = useForm({
+  const { register } = useForm({
     defaultValues: {
       designation: employee.designation || "",
     },

@@ -116,38 +116,40 @@ function Signup() {
             )}
           </div>
 
-          <div className="relative">
-            <Input
-              type={show.password ? "text" : "password"}
-              autoComplete="off"
-              placeholder="Password"
-              {...register("password", {
-                required: "Password is required",
-                validate: {
-                  matchPattern: (value) =>
-                    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#_])[A-Za-z\d@$!%*?&#_]{6,}$/.test(
-                      value,
-                    ) ||
-                    "Password must include atleast One Uppercase Letter, Lowercase Letter, Digit and Special Symbol!",
-                },
-                minLength: {
-                  value: 6,
-                  message: "Password must contain atleast 6 characters!",
-                },
-              })}
-            />
-            <Button
-              type="button"
-              onClick={() =>
-                setShow((prev) => ({
-                  ...prev,
-                  password: !prev.password,
-                }))
-              }
-              className="absolute right-0 top-1/2 -translate-y-1/2 text-lg text-slate-500"
-            >
-              {show.password ? <FiEyeOff /> : <FiEye />}
-            </Button>
+          <div>
+            <div className="relative">
+              <Input
+                type={show.password ? "text" : "password"}
+                autoComplete="off"
+                placeholder="Password"
+                {...register("password", {
+                  required: "Password is required",
+                  validate: {
+                    matchPattern: (value) =>
+                      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#_])[A-Za-z\d@$!%*?&#_]{6,}$/.test(
+                        value,
+                      ) ||
+                      "Password must include atleast One Uppercase Letter, Lowercase Letter, Digit and Special Symbol!",
+                  },
+                  minLength: {
+                    value: 6,
+                    message: "Password must contain atleast 6 characters!",
+                  },
+                })}
+              />
+              <Button
+                type="button"
+                onClick={() =>
+                  setShow((prev) => ({
+                    ...prev,
+                    password: !prev.password,
+                  }))
+                }
+                className="absolute right-0 top-1/2 -translate-y-1/2 text-lg text-slate-500"
+              >
+                {show.password ? <FiEyeOff /> : <FiEye />}
+              </Button>
+            </div>
             {errors.password && (
               <span className="text-red-600">{errors.password.message}</span>
             )}

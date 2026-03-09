@@ -82,29 +82,30 @@ export default function Login() {
             )}
           </div>
 
-          <div className="relative">
-            <Input
-              type={show.password ? "text" : "password"}
-              autoComplete="off"
-              placeholder="Password"
-              {...register("password", {
-                required: "Enter password!",
-              })}
-            />
+          <div>
+            <div className="relative">
+              <Input
+                type={show.password ? "text" : "password"}
+                autoComplete="off"
+                placeholder="Password"
+                {...register("password", {
+                  required: "Enter password!",
+                })}
+              />
 
-            <Button
-              type="button"
-              onClick={() =>
-                setShow((prev) => ({
-                  ...prev,
-                  password: !prev.password,
-                }))
-              }
-              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 text-lg text-slate-500"
-            >
-              {show.password ? <FiEyeOff /> : <FiEye />}
-            </Button>
-
+              <Button
+                type="button"
+                onClick={() =>
+                  setShow((prev) => ({
+                    ...prev,
+                    password: !prev.password,
+                  }))
+                }
+                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 text-lg text-slate-500"
+              >
+                {show.password ? <FiEyeOff /> : <FiEye />}
+              </Button>
+            </div>
             {errors.password && (
               <span className="text-red-600">{errors.password.message}</span>
             )}

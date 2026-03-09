@@ -52,65 +52,69 @@ export default function ResetPassword() {
         )}
 
         <form onSubmit={handleSubmit(submit)} className="space-y-4">
-          <div className="relative">
-            <Input
-              type={show.new ? "text" : "password"}
-              autoComplete="off"
-              placeholder="New Password"
-              {...register("newPwd", {
-                required: "Enter new password!",
-                minLength: {
-                  value: 6,
-                  message: "Password must contain at least 6 characters!",
-                },
-                validate: {
-                  matchPattern: (value) =>
-                    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#_])[A-Za-z\d@$!%*?&#_]{6,}$/.test(
-                      value,
-                    ) ||
-                    "Password must include atleast one uppercase letter, lowercase letter, digit and special symbol!",
-                },
-              })}
-            />
-            <Button
-              type="button"
-              onClick={() =>
-                setShow((prev) => ({
-                  ...prev,
-                  new: !prev.new,
-                }))
-              }
-              className="absolute right-0 top-1/2 -translate-y-1/2 text-lg text-slate-500"
-            >
-              {show.new ? <FiEyeOff /> : <FiEye />}
-            </Button>
+          <div>
+            <div className="relative">
+              <Input
+                type={show.new ? "text" : "password"}
+                autoComplete="off"
+                placeholder="New Password"
+                {...register("newPwd", {
+                  required: "Enter new password!",
+                  minLength: {
+                    value: 6,
+                    message: "Password must contain at least 6 characters!",
+                  },
+                  validate: {
+                    matchPattern: (value) =>
+                      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#_])[A-Za-z\d@$!%*?&#_]{6,}$/.test(
+                        value,
+                      ) ||
+                      "Password must include atleast one uppercase letter, lowercase letter, digit and special symbol!",
+                  },
+                })}
+              />
+              <Button
+                type="button"
+                onClick={() =>
+                  setShow((prev) => ({
+                    ...prev,
+                    new: !prev.new,
+                  }))
+                }
+                className="absolute right-0 top-1/2 -translate-y-1/2 text-lg text-slate-500"
+              >
+                {show.new ? <FiEyeOff /> : <FiEye />}
+              </Button>
+            </div>
             {errors.newPwd && (
               <span className="text-red-600">{errors.newPwd.message}</span>
             )}
           </div>
 
-          <div className="relative">
-            <Input
-              type={show.confirm ? "text" : "password"}
-              placeholder="Confirm Password"
-              {...register("cnfPwd", {
-                required: "Enter password to confirm!",
-                validate: (value) =>
-                  value === watch("newPwd") || "Passwords do not match!",
-              })}
-            />
-            <Button
-              type="button"
-              onClick={() =>
-                setShow((prev) => ({
-                  ...prev,
-                  confirm: !prev.confirm,
-                }))
-              }
-              className="absolute right-0 top-1/2 -translate-y-1/2 text-lg text-slate-500"
-            >
-              {show.confirm ? <FiEyeOff /> : <FiEye />}
-            </Button>
+          <div>
+            <div className="relative">
+              <Input
+                type={show.confirm ? "text" : "password"}
+                placeholder="Confirm Password"
+                {...register("cnfPwd", {
+                  required: "Enter password to confirm!",
+                  validate: (value) =>
+                    value === watch("newPwd") || "Passwords do not match!",
+                })}
+              />
+              <Button
+                type="button"
+                onClick={() =>
+                  setShow((prev) => ({
+                    ...prev,
+                    confirm: !prev.confirm,
+                  }))
+                }
+                className="absolute right-0 top-1/2 -translate-y-1/2 text-lg text-slate-500"
+              >
+                {show.confirm ? <FiEyeOff /> : <FiEye />}
+              </Button>
+            </div>
             {errors.cnfPwd && (
               <span className="text-red-600">{errors.cnfPwd.message}</span>
             )}
