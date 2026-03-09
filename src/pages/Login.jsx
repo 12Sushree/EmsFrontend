@@ -89,7 +89,7 @@ export default function Login() {
                 autoComplete="off"
                 placeholder="Password"
                 {...register("password", {
-                  required: "Enter password!",
+                  required: "Please enter Password",
                 })}
               />
 
