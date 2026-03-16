@@ -12,6 +12,7 @@ function AttendanceCard() {
   const [alert, setAlert] = useState(null);
   const [loading, setLoading] = useState(false);
   const [loadingToday, setLoadingToday] = useState(true);
+  const [elapsed, setElapsed] = useState(0);
 
   const formatDate = (date) => {
     return new Date(date).toLocaleDateString("en-CA");
@@ -43,19 +44,20 @@ function AttendanceCard() {
     loadToday();
   }, []);
 
+  const sessions = today?.sessions || [];
+
+  const lastSession =
+    sessions.length > 0 ? sessions[sessions.length - 1] : null;
+
+  const isCheckedIn =
+    lastSession && lastSession.checkIn && !lastSession.checkOut;
+
   const handleCheckIn = async () => {
     try {
       setLoading(true);
 
-      await checkIn();
-
-      setToday((prev) => ({
-        ...prev,
-        checkIn: new Date().toISOString(),
-        status: "Present",
-      }));
-
-      await loadToday();
+      const res = await checkIn();
+      setToday(res.data.record);
 
       setAlert({ type: "success", message: "Checked in successfully" });
     } catch (err) {
@@ -72,14 +74,8 @@ function AttendanceCard() {
     try {
       setLoading(true);
 
-      await checkOut();
-
-      setToday((prev) => ({
-        ...prev,
-        checkOut: new Date().toISOString(),
-      }));
-
-      await loadToday();
+      const res = await checkOut();
+      setToday(res.data.record);
 
       setAlert({ type: "success", message: "Checked out successfully" });
     } catch (err) {
@@ -92,8 +88,41 @@ function AttendanceCard() {
     }
   };
 
-  const hasCheckedIn = Boolean(today?.checkIn);
-  const hasCheckedOut = Boolean(today?.checkOut);
+  const calculateTime = () => {
+    if (!today?.sessions) return 0;
+
+    const now = new Date();
+    let total = 0;
+
+    today.sessions.forEach((s) => {
+      if (!s.checkIn) return;
+
+      const start = new Date(s.checkIn);
+      const end = s.checkOut ? new Date(s.checkOut) : now;
+
+      total += end - start;
+    });
+
+    return total;
+  };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setElapsed(calculateTime());
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [today]);
+
+  const formatTime = (ms) => {
+    const totalSeconds = Math.floor(ms / 1000);
+
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    return `${hours}h ${minutes}m ${seconds}s`;
+  };
 
   useEffect(() => {
     if (!alert) return;
@@ -122,7 +151,7 @@ function AttendanceCard() {
       <div className="flex gap-4">
         <Button
           onClick={handleCheckIn}
-          disabled={loading || hasCheckedIn}
+          disabled={loading || isCheckedIn}
           className="btn-success btn-success-glow w-1/2"
         >
           {loading ? "Processing..." : "Check In"}
@@ -130,11 +159,19 @@ function AttendanceCard() {
 
         <Button
           onClick={handleCheckOut}
-          disabled={loading || !hasCheckedIn || hasCheckedOut}
+          disabled={loading || !isCheckedIn}
           className="btn-danger btn-danger-glow w-1/2"
         >
           {loading ? "Processing..." : "Check Out"}
         </Button>
+      </div>
+
+      <div className="mt-4 text-center">
+        <p className="text-sm text-gray-500">Time in Office</p>
+
+        <p className="text-2xl font-bold text-indigo-600">
+          {formatTime(elapsed)}
+        </p>
       </div>
 
       {today && (

@@ -12,6 +12,7 @@ export const myAttendance = (page = 1) =>
 
 export const applyLeave = (data) => api.post("/leave/apply", data);
 export const myLeaves = (page = 1) => api.get(`/leave/my?page=${page}`);
+export const myLeaveCalendar = () => api.get("/leave/leave-calendar");
 
 export const myPerformance = () => api.get("/performance/my");
 

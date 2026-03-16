@@ -8,6 +8,7 @@ export const createAnnouncement = (data) =>
 export const getAllLeaves = (page = 1) => api.get(`/leave/all?page=${page}`);
 export const updateLeave = (id, status) =>
   api.patch(`leave/status/${id}`, { status });
+export const teamLeaveCalendar = () => api.get("/leave/team-leave-calendar");
 
 export const teamDetails = (page = 1) =>
   api.get(`/manager/team-mems?page=${page}`);

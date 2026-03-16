@@ -117,6 +117,14 @@ export default function SideBar() {
               </NavLink>
             </>
           )}
+
+          <NavLink
+            to="/calendar"
+            className={linkClass}
+            onClick={() => setIsOpen(false)}
+          >
+            Leave Calendar
+          </NavLink>
         </nav>
 
         <div className="mt-10">

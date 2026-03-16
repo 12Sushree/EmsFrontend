@@ -5,32 +5,55 @@ import Button from "../common/Button";
 
 function AddEmployeeForm() {
   const [query, setQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
   const [results, setResults] = useState([]);
   const [alert, setAlert] = useState(null);
   const [searching, setSearching] = useState(false);
   const [addingId, setAddingId] = useState(null);
 
-  const search = async () => {
-    try {
-      if (!query.trim()) return;
-      setSearching(true);
-      const res = await searchEmployees(query);
-      setResults(res.data.users);
-    } catch (err) {
-      setAlert({
-        type: "error",
-        message: err.response?.data?.message || "Search failed",
-      });
-    } finally {
-      setSearching(false);
-    }
-  };
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(query);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [query]);
+
+  useEffect(() => {
+    const search = async () => {
+      try {
+        if (!debouncedQuery.trim()) {
+          setResults([]);
+          return;
+        }
+
+        setSearching(true);
+        const res = await searchEmployees(debouncedQuery);
+        setResults(res.data.users);
+      } catch (err) {
+        setAlert({
+          type: "error",
+          message: err.response?.data?.message || "Search failed",
+        });
+      } finally {
+        setSearching(false);
+      }
+    };
+
+    search();
+  }, [debouncedQuery]);
 
   const handleAdd = async (empId) => {
     try {
       setAddingId(empId);
+
       await addEmployee(empId);
-      setAlert({ type: "success", message: "Employee added to your team!" });
+
+      setAlert({
+        type: "success",
+        message: "Employee added to your team!",
+      });
+
       setResults([]);
       setQuery("");
     } catch (err) {
@@ -65,13 +88,9 @@ function AddEmployeeForm() {
           className="input"
         />
 
-        <Button
-          onClick={search}
-          className="btn-success btn-success-glow w-full"
-          disabled={searching}
-        >
-          {searching ? "Searching..." : "Search"}
-        </Button>
+        {searching && (
+          <p className="text-sm text-slate-500 text-center">Searching.....</p>
+        )}
 
         {results.length === 0 && !searching && query && (
           <p className="text-sm text-slate-500 text-center">No users found</p>

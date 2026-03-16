@@ -6,11 +6,13 @@ import {
 } from "../utils/token";
 
 const api = axios.create({
+  // baseURL: "http://localhost:5000/api",
   baseURL: "https://emsbackend-rztc.onrender.com/api",
   withCredentials: true,
 });
 
 const refreshApi = axios.create({
+  // baseURL: "http://localhost:5000/api",
   baseURL: "https://emsbackend-rztc.onrender.com/api",
   withCredentials: true,
 });
@@ -36,6 +38,8 @@ const processQueue = (error, token = null) => {
   failedQueue = [];
 };
 
+const authRoutes = ["/auth/login", "/auth/register"];
+
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -48,6 +52,7 @@ api.interceptors.response.use(
     if (
       error.response?.status === 401 &&
       !originalRequest._retry &&
+      !authRoutes.includes(originalRequest.url) &&
       originalRequest.url !== "/token/refresh"
     ) {
       if (isRefreshing) {

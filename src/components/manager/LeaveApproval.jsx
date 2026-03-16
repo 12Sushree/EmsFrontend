@@ -18,7 +18,7 @@ function LeaveApproval() {
     try {
       setLoading(true);
       const res = await getAllLeaves(page);
-      setLeaves(res.data.data || []);
+      setLeaves(res.data.leaves || []);
       setTotalPages(res.data.pages || 1);
     } catch (err) {
       setAlert({

@@ -23,6 +23,7 @@ import ForgotPassword from "./pages/ForgotPassword.jsx";
 import ResetPassword from "./pages/ResetPassword.jsx";
 import UpdateProfile from "./pages/UpdateProfile.jsx";
 import ChangePassword from "./pages/ChangePassword.jsx";
+import Calendar from "./pages/Calendar.jsx";
 
 export const router = createBrowserRouter([
   {
@@ -67,6 +68,10 @@ export const router = createBrowserRouter([
           {
             path: "change-password",
             element: <ChangePassword />,
+          },
+          {
+            path: "calendar",
+            element: <Calendar />,
           },
           {
             path: "manager",

@@ -1,5 +1,6 @@
 import DashboardLayout from "../../components/common/DashboardLayout";
 import PageHeader from "../../components/common/PageHeader";
+import LeaveCalendar from "../../components/employee/LeaveCalendar";
 import LeaveForm from "../../components/employee/LeaveForm";
 import MyLeaves from "../../components/employee/MyLeaves";
 
